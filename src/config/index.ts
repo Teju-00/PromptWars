@@ -18,8 +18,8 @@ export const CONFIG = {
       ? process.env.MAPS_API_KEY
       : (import.meta.env.VITE_MAPS_API_KEY || ''),
     BASE_URL: isServer
-      ? (process.env.APP_URL || 'http://localhost:3000')
-      : (import.meta.env.VITE_APP_URL || 'http://localhost:3000'),
+      ? (process.env.APP_URL || 'http://localhost:5173')
+      : (import.meta.env.VITE_APP_URL || 'http://localhost:5173'),
   },
 
   FEATURES: {

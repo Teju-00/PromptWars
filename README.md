@@ -54,20 +54,86 @@ The **India Election Companion Assistant** addresses these challenges through a 
 
 ---
 
-## 🧠 Decision Logic & Intelligence
+---
 
-### Readiness Scoring Logic
-The platform calculates a **"Voter Readiness Score"** out of 100% using the following weights:
-- **Registration Status (40%)**: Verified via simulation or registration data.
-- **Document Availability (30%)**: Confirmed possession of Age and Address proofs.
-- **Booth Awareness (20%)**: Successful lookup of designated polling station.
-- **Knowledge Base (10%)**: Completion of basic civic literacy quiz modules.
+## 🏗️ System Architecture
 
-### Accessibility & Security
-- **Civic Workflow Guidance**: Responses are structured with bullet points and clear "Recommended Next Steps."
-- **Secure Environment**: All API keys and Firebase credentials are protected via environment variables (`.env`).
-- **No Hardcoding**: All AI and Map calls are strictly routed through secure environment hooks.
-- **Firestore Security**: Rules applied to ensure user data isolation.
+The India Election Companion Assistant follows a robust, cloud-native architecture leveraging the full power of the Google Cloud ecosystem.
+
+```mermaid
+graph TD
+    A[User / Citizen] -->|Interacts| B[React + Vite Frontend]
+    B -->|Fetches Learning Data| C[(Firebase Firestore)]
+    B -->|Uploads Docs / Loads Assets| D[Firebase Storage]
+    B -->|Contextual Q&A| E[Vertex AI Gemini API]
+    B -->|Constituency Search| F[Google Maps API]
+    B -->|Eligibility Requests| G[Cloud Run API Backend]
+    
+    subgraph Google Cloud Platform
+        C
+        D
+        E
+        F
+        G
+    end
+```
+
+### ASCII Architecture Flow:
+```text
+[ User / Citizen ]
+       │
+       ▼
+[ React + Vite Frontend ] ──────────┐
+       │                            │
+       ├─ (1) Fetch Learning Data ─▶[ Firestore ]
+       │                            │
+       ├─ (2) Contextual Q&A ──────▶[ Vertex AI Gemini ]
+       │                            │
+       ├─ (3) Eligibility Logic ───▶[ Cloud Run API ]
+       │                            │
+       ├─ (4) Asset Hosting ───────▶[ Firebase Storage ]
+       │                            │
+       └─ (5) Booth Locator ───────▶[ Google Maps API ]
+```
+
+### Architectural Flow:
+1.  **User Interface**: Users interact with a premium, responsive React frontend.
+2.  **Civic Knowledge Base**: Frontend fetches real-time learning data (timeline, myths) directly from **Firestore**.
+3.  **Intelligent Assistant**: **Vertex AI Gemini** powers the contextual conversation engine, providing step-by-step civic guidance.
+4.  **Backend Services**: **Cloud Run** handles complex eligibility logic and administrative data processing.
+5.  **Resource Management**: **Firebase Storage** serves static civic resources and hosts user-managed documents.
+6.  **Spatial Awareness**: **Google Maps API** provides real-time constituency and polling booth lookups.
+
+---
+
+## 🧠 Assistant Decision Logic Engine
+
+The "India Election Companion" is not just a chatbot; it is an intelligent advisor that adapts its guidance based on a sophisticated decision engine.
+
+### 1. Readiness Scoring Logic
+The engine calculates a **"Voter Readiness Score"** by evaluating five key pillars:
+- **Age Eligibility**: Verified through simulation or manual DOB input.
+- **Registration Awareness**: Tracking if the user has completed the simulated Form 6 process.
+- **Document Availability**: Assessing readiness of essential identity and address proofs.
+- **Booth Knowledge**: Confirmed through a successful PINCODE-based constituency lookup.
+- **Timeline Completion**: Tracking progress through the interactive electoral roadmap.
+
+### 2. Adaptive Guidance
+The Gemini assistant dynamically adapts its responses based on the current Readiness Score:
+- **Score < 30%**: Focuses on basic registration steps and Form 6 walkthroughs.
+- **Score 30-70%**: Prioritizes document verification and finding the designated polling station.
+- **Score > 70%**: Shifts focus to polling day etiquette, EVM/VVPAT operation, and carrying the correct ID.
+
+---
+
+## ♿ Accessibility & Security
+- **Structured AI Responses**: Responses use bold headers and bullet points for high cognitive accessibility.
+- **Multilingual Fallback**: Seamless fallback to static guidance in Hindi or Telugu if API connectivity is low.
+- **Mobile Responsive**: A fluid layout optimized for low-end devices and varied screen sizes.
+- **Security First**: 
+    - Environment variables protected via `.env`.
+    - No hardcoded API keys.
+    - Strict Firestore Security Rules applied.
 
 ---
 

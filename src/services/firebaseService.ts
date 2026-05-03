@@ -170,6 +170,46 @@ export const subscribeToNews = (callback: (news: any[]) => void) => {
   });
 };
 
+export const fetchQuizTopics = async () => {
+  const path = 'quiz_topics';
+  try {
+    const snapshot = await getDocs(collection(db, path));
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, path);
+  }
+};
+
+export const fetchRequiredDocumentsList = async () => {
+  const path = 'documents_required';
+  try {
+    const snapshot = await getDocs(collection(db, path));
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, path);
+  }
+};
+
+export const fetchMythsVsFacts = async () => {
+  const path = 'myths_vs_facts';
+  try {
+    const snapshot = await getDocs(collection(db, path));
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, path);
+  }
+};
+
+export const fetchConstituencies = async () => {
+  const path = 'constituencies';
+  try {
+    const snapshot = await getDocs(collection(db, path));
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, path);
+  }
+};
+
 export const fetchNewsById = async (newsId: string) => {
   const path = `news/${newsId}`;
   try {

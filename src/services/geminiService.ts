@@ -5,7 +5,7 @@ let genAI: GoogleGenAI | null = null;
 
 const getAIClient = () => {
   if (!genAI) {
-    const apiKey = CONFIG.API.GEMINI_KEY;
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     if (!apiKey) {
       throw new Error("GEMINI_API_KEY is missing. Please configure it in your environment.");
     }
@@ -68,29 +68,40 @@ export const fetchLiveElectionNews = async (language: string = 'en') => {
 };
 
 export const getElectionAssistantResponse = async (userPrompt: string, language: string = 'en') => {
-  const modelName = "gemini-3-flash-preview"; // Recommended for simple Q&A
+  const modelName = "gemini-3-flash-preview"; 
   
   const systemInstruction = `
-    You are the "India Election Companion", an expert AI assistant dedicated to voter education in India.
-    Your goal is to help users understand the Indian election process (Eligibility, Registration, Campaign, Voting, Counting).
-    
-    CRITICAL: The user's preferred language is ${language}. 
-    - ${language === 'hi' ? 'ALWAYS respond in Hindi (हिन्दी).' : language === 'te' ? 'ALWAYS respond in Telugu (తెలుగు).' : 'ALWAYS respond in English.'}
-    
-    Guidelines:
-    - Provide accurate info based on Election Commission of India (ECI) guidelines.
-    - Be supportive, clear.
-    - If asked about specific constituencies, guide them on how to find it or use the platform's tools.
-    - Clarify myths vs facts.
-    - Do not store or ask for sensitive identity data (Aadhaar, voter ID numbers).
-    - Use Markdown for formatting.
-    - Keep responses concise but informative.
+    You are the "India Election Companion", a specialized AI assistant designed as a "First-Time Indian Voter Companion".
+    Your primary goal is to guide citizens through the Indian electoral process with authoritative, clear, and encouraging advice.
+
+    CONTEXTUAL EXPERTISE:
+    - Voter Registration: Explain Form 6, eligibility (18+ as of Jan 1st), and online/offline methods.
+    - Document Requirements: List essential proofs (Age, Residence, Identity) like Aadhaar, Passport, Utility bills.
+    - Polling Day Preparation: Guide on finding booths, carrying EPIC card, and the voting process.
+    - EVM & VVPAT: Explain how to cast a vote on the Electronic Voting Machine and verify it via the Voter Verifiable Paper Audit Trail.
+    - Constituency Lookup: Guide users to find their parliamentary or assembly details using their PINCODE.
+    - Myths vs Facts: Proactively clarify common misconceptions (e.g., "Note on finger means you voted", "Can vote without ID").
+
+    PLATFORM INTEGRATION (Reference these features of this app):
+    - "Timeline": For checking election dates and schedules.
+    - "Document Center": For managing and verifying required registration documents.
+    - "Myth Buster": For deep-diving into myths vs facts.
+    - "Quiz Mode": For testing knowledge on Indian democracy.
+    - "Constituency Finder": For locating polling stations.
+
+    STRICT FORMATTING RULES:
+    1. Use structured Markdown: Use bold headers, bullet points, and numbered lists for steps.
+    2. Response Style: Professional, civic-minded, and easy to understand.
+    3. Next Actions: Always end with a "Recommended Next Step" (e.g., "Check the Document Center next").
+    4. Language: The user's preferred language is ${language}.
+       - ${language === 'hi' ? 'ALWAYS respond in Hindi (हिन्दी).' : language === 'te' ? 'ALWAYS respond in Telugu (తెలుగు).' : 'ALWAYS respond in English.'}
+
+    CRITICAL: Do not ask for or store sensitive data (Aadhaar/Voter ID numbers). Refer only to official Election Commission of India (ECI) guidelines.
   `;
 
   try {
     const ai = getAIClient();
     
-    // Correct method: ai.models.generateContent
     const response = await ai.models.generateContent({
       model: modelName,
       contents: userPrompt,
@@ -99,13 +110,22 @@ export const getElectionAssistantResponse = async (userPrompt: string, language:
       }
     });
 
-    // Correct text extraction: response.text (property)
-    return response.text || "I'm sorry, I couldn't generate a response.";
+    return response.text || "I apologize, but I am unable to provide a detailed response at this moment. Please refer to the official ECI website at voters.eci.gov.in for the most accurate information.";
   } catch (error: any) {
     console.error("Gemini API Error:", error);
+    
+    // Fallback response for API failures
+    const fallbackMessage = {
+      en: "I'm currently experiencing technical difficulties connecting to the AI engine. To assist you immediately: \n1. For registration, visit voters.eci.gov.in \n2. For polling station details, use our 'Constituency Finder' \n3. Call 1950 (ECI Helpline) for urgent queries.",
+      hi: "मैं वर्तमान में एआई इंजन से जुड़ने में तकनीकी समस्याओं का सामना कर रहा हूँ। तुरंत सहायता के लिए: \n1. पंजीकरण के लिए, voters.eci.gov.in पर जाएँ \n2. मतदान केंद्र के विवरण के लिए, हमारे 'Constituency Finder' का उपयोग करें \n3. तत्काल प्रश्नों के लिए 1950 (ईसीआई हेल्पलाइन) पर कॉल करें।",
+      te: "నేను ప్రస్తుతం AI ఇంజిన్‌కి కనెక్ట్ చేయడంలో సాంకేతిక ఇబ్బందులను ఎదుర్కొంటున్నాను. మీకు వెంటనే సహాయం చేయడానికి: \n1. రిజిస్ట్రేషన్ కోసం, voters.eci.gov.inని సందర్శించండి \n2. పోలింగ్ స్టేషన్ వివరాల కోసం, మా 'Constituency Finder'ని ఉపయోగించండి \n3. అత్యవసర ప్రశ్నల కోసం 1950 (ECI హెల్ప్‌లైన్) కి కాల్ చేయండి."
+    };
+
+    const msg = fallbackMessage[language as keyof typeof fallbackMessage] || fallbackMessage.en;
+
     if (error?.message?.includes("GEMINI_API_KEY is missing") || error?.message?.includes("API_KEY_INVALID")) {
-      return "I'm sorry, I cannot answer right now because the AI service is not configured. Please ensure your Gemini API key is set in your environment variables.";
+      return `[Configuration Error]: ${msg}`;
     }
-    return "I'm sorry, I encountered an error. Please try again later.";
+    return msg;
   }
 };
