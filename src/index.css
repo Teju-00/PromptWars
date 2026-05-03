@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  
+  --color-saffron: #FF9933;
+  --color-green-accent: #138808;
+  --color-navy: #000080;
+  --color-government-grey: #6E6E6E;
+  --color-slate-bg: #F0F2F5;
+  --color-border-slate: #C4CED8;
+}
+
+:root {
+  --font-size-base: 16px;
+}
+
+@layer base {
+  html, body {
+    @apply antialiased overflow-x-hidden w-full;
+    font-size: var(--font-size-base);
+  }
+
+  body {
+    @apply bg-slate-bg text-[#1f2937];
+  }
+}
+
+@layer components {
+  /* Government-style containers */
+  .gov-container {
+    @apply max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 w-full;
+  }
+
+  /* Official Cards */
+  .geo-card {
+    @apply bg-white border border-border-slate shadow-sm rounded-sm p-6 relative transition-all;
+  }
+  
+  .geo-card::before {
+    content: '';
+    @apply absolute top-0 left-0 w-full h-[3px] bg-navy opacity-0 transition-opacity;
+  }
+
+  .geo-card:hover::before {
+    @apply opacity-100;
+  }
+
+  .geo-card-saffron {
+    @apply border-t-4 border-t-saffron;
+  }
+
+  .geo-card-green {
+    @apply border-t-4 border-t-green-accent;
+  }
+
+  /* Official Buttons */
+  .btn-primary {
+    @apply bg-navy text-white hover:bg-[#000066] px-6 py-2.5 rounded-sm transition-all text-sm font-bold shadow-sm disabled:opacity-50 active:translate-y-[1px];
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-navy text-navy hover:bg-slate-50 px-6 py-2.5 rounded-sm transition-all text-sm font-bold shadow-sm;
+  }
+
+  /* Typography */
+  .official-heading {
+    @apply font-bold text-navy tracking-tight;
+  }
+
+  .nav-link {
+    @apply flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-navy transition-all relative overflow-hidden;
+  }
+
+  .nav-link-active {
+    @apply bg-[#E6E6FF] text-navy font-bold border-r-[6px] border-r-navy shadow-inner;
+  }
+
+  /* Font Accessibility Helpers */
+  .font-size-large { @apply text-lg; }
+  .font-size-small { @apply text-xs; }
+}
+
+/* Fix for horizontal scroll rogue elements */
+* {
+  box-sizing: border-box;
+}

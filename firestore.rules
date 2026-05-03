@@ -1,0 +1,117 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 0.1 Global Helpers
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isAdmin() { 
+      return isSignedIn() && (
+        request.auth.token.email == 'kothurutejashwar@gmail.com' && 
+        request.auth.token.email_verified == true
+      ); 
+    }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // 1. Entity Validations
+    function isValidTimelineStep(data) {
+      return data.keys().hasAll(['id', 'order', 'title', 'description', 'phase']) &&
+             data.keys().size() == 5 &&
+             data.id is string && data.id.size() <= 128 &&
+             data.order is number &&
+             data.title is string && data.title.size() <= 200 &&
+             data.description is string && data.description.size() <= 1000 &&
+             data.phase in ['Eligibility', 'Registration', 'Campaign', 'Voting', 'Counting', 'Results'];
+    }
+
+    function isValidFlashcard(data) {
+      return data.keys().hasAll(['id', 'term', 'definition']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.term is string && data.term.size() <= 100 &&
+             data.definition is string && data.definition.size() <= 1000;
+    }
+
+    function isValidQuizQuestion(data) {
+      return data.keys().hasAll(['id', 'question', 'options', 'correctAnswerIndex']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.question is string && data.question.size() <= 500 &&
+             data.options is list && data.options.size() >= 2 && data.options.size() <= 6 &&
+             data.correctAnswerIndex is number;
+    }
+
+    function isValidNewsItem(data) {
+      return data.keys().hasAll(['id', 'title', 'content', 'category', 'updatedAt']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.title is string && data.title.size() <= 200 &&
+             data.content is string && data.content.size() <= 10000 &&
+             data.category is string && data.category.size() <= 50 &&
+             data.updatedAt == request.time;
+    }
+
+    function isValidUserProgress(data) {
+      return data.keys().hasAll(['userId', 'updatedAt']) &&
+             data.userId == request.auth.uid &&
+             data.updatedAt == request.time &&
+             (data.get('readinessScore', null) == null || (data.readinessScore is number && data.readinessScore >= 0 && data.readinessScore <= 100));
+    }
+
+    // 2. Collection Rules
+    match /timeline/{stepId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() && isValidTimelineStep(incoming()) && isValidId(stepId);
+    }
+
+    match /news/{newsId} {
+      allow read: if true; // Public news
+      allow write: if isAdmin() && isValidNewsItem(incoming()) && isValidId(newsId);
+    }
+
+    match /flashcards/{cardId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() && isValidFlashcard(incoming()) && isValidId(cardId);
+    }
+
+    match /quiz_questions/{questionId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() && isValidQuizQuestion(incoming()) && isValidId(questionId);
+    }
+
+    match /user_progress/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && isValidUserProgress(incoming());
+      allow update: if isOwner(userId) && isValidUserProgress(incoming()) && (
+        incoming().userId == existing().userId &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'readinessScore', 'completedSteps', 'quizScores', 'simulationCompleted', 
+          'documentsVerified', 'updatedAt', 'displayName', 'phoneNumber', 
+          'address', 'dob', 'photoURL', 'registrationStatus',
+          'email', 'authProvider', 'registrationCompleted', 'joinedAt'
+        ])
+      );
+      allow delete: if false;
+
+      // Voter Registration Data
+      match /registration/form6 {
+        allow read, write: if isOwner(userId);
+      }
+
+      // User Documents
+      match /documents/{docId} {
+        allow list: if isOwner(userId);
+        allow get, write: if isOwner(userId) && isValidId(docId);
+      }
+    }
+
+    match /constituencies/{pincode} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}
