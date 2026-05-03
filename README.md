@@ -56,18 +56,20 @@ The **India Election Companion Assistant** addresses these challenges through a 
 
 ---
 
+---
+
 ## 🏗️ System Architecture
 
-The India Election Companion Assistant follows a robust, cloud-native architecture leveraging the full power of the Google Cloud ecosystem.
+The India Election Companion Assistant follows a cloud-native, microservices-oriented architecture designed for reliability and scale.
 
 ```mermaid
 graph TD
     A[User / Citizen] -->|Interacts| B[React + Vite Frontend]
-    B -->|Fetches Learning Data| C[(Firebase Firestore)]
-    B -->|Uploads Docs / Loads Assets| D[Firebase Storage]
-    B -->|Contextual Q&A| E[Vertex AI Gemini API]
-    B -->|Constituency Search| F[Google Maps API]
-    B -->|Eligibility Requests| G[Cloud Run API Backend]
+    B -->|Loads Civic Datasets| C[(Firebase Firestore)]
+    B -->|Serves Static Resources| D[Firebase Storage]
+    B -->|Contextual Reasoning| E[Vertex AI Gemini API]
+    B -->|Constituency Lookup| F[Google Maps API]
+    B -->|Eligibility Microservice| G[Cloud Run API Backend]
     
     subgraph Google Cloud Platform
         C
@@ -85,55 +87,57 @@ graph TD
        ▼
 [ React + Vite Frontend ] ──────────┐
        │                            │
-       ├─ (1) Fetch Learning Data ─▶[ Firestore ]
+       ├─ (1) Load Civic Datasets ─▶[ Firestore ]
        │                            │
-       ├─ (2) Contextual Q&A ──────▶[ Vertex AI Gemini ]
+       ├─ (2) Contextual Reasoning ─▶[ Vertex AI Gemini ]
        │                            │
-       ├─ (3) Eligibility Logic ───▶[ Cloud Run API ]
+       ├─ (3) Eligibility Service ──▶[ Cloud Run API ]
        │                            │
-       ├─ (4) Asset Hosting ───────▶[ Firebase Storage ]
+       ├─ (4) Static Resource Host ─▶[ Firebase Storage ]
        │                            │
-       └─ (5) Booth Locator ───────▶[ Google Maps API ]
+       └─ (5) Constituency Lookup ──▶[ Google Maps API ]
 ```
-
-### Architectural Flow:
-1.  **User Interface**: Users interact with a premium, responsive React frontend.
-2.  **Civic Knowledge Base**: Frontend fetches real-time learning data (timeline, myths) directly from **Firestore**.
-3.  **Intelligent Assistant**: **Vertex AI Gemini** powers the contextual conversation engine, providing step-by-step civic guidance.
-4.  **Backend Services**: **Cloud Run** handles complex eligibility logic and administrative data processing.
-5.  **Resource Management**: **Firebase Storage** serves static civic resources and hosts user-managed documents.
-6.  **Spatial Awareness**: **Google Maps API** provides real-time constituency and polling booth lookups.
 
 ---
 
 ## 🧠 Assistant Decision Logic Engine
 
-The "India Election Companion" is not just a chatbot; it is an intelligent advisor that adapts its guidance based on a sophisticated decision engine.
+The **India Election Companion** is an intelligent advisor that dynamically computes a voter's readiness based on their unique journey.
 
-### 1. Readiness Scoring Logic
-The engine calculates a **"Voter Readiness Score"** by evaluating five key pillars:
-- **Age Eligibility**: Verified through simulation or manual DOB input.
-- **Registration Awareness**: Tracking if the user has completed the simulated Form 6 process.
-- **Document Availability**: Assessing readiness of essential identity and address proofs.
-- **Booth Knowledge**: Confirmed through a successful PINCODE-based constituency lookup.
-- **Timeline Completion**: Tracking progress through the interactive electoral roadmap.
+### 1. Readiness Scoring Algorithm
+The engine determines the "Voter Readiness Score" by evaluating the following logic branches:
+- **Age Eligibility**: Checks if the user meets the 18+ requirement as of January 1st.
+- **Registration Awareness**: Validates completion of the Form 6 registration simulation.
+- **Document Readiness**: Tracks the availability of mandatory Proof of Identity and Address.
+- **Polling Knowledge**: Measures awareness of EVM/VVPAT operations.
+- **Timeline Completion**: Tracks if the user has reviewed the critical milestones in the electoral cycle.
 
-### 2. Adaptive Guidance
-The Gemini assistant dynamically adapts its responses based on the current Readiness Score:
-- **Score < 30%**: Focuses on basic registration steps and Form 6 walkthroughs.
-- **Score 30-70%**: Prioritizes document verification and finding the designated polling station.
-- **Score > 70%**: Shifts focus to polling day etiquette, EVM/VVPAT operation, and carrying the correct ID.
+### 2. Adaptive Intelligence
+The Gemini assistant adapts its recommendations based on the user's score:
+- **Low Score (< 30%)**: The assistant focuses on the fundamentals of democracy and registration steps.
+- **Mid Score (30-70%)**: The assistant prioritizes document checklists and polling station identification.
+- **High Score (> 70%)**: The assistant shifts to advanced booth etiquette, VVPAT verification, and "Polling Day Preparedness."
+
+---
+
+## ☁️ Google Cloud Services Used
+
+| Service | Role in Intelligence | Scalability & Usability Benefit |
+| :--- | :--- | :--- |
+| **Vertex AI (Gemini)** | Powers the "Knowledge Engine" | Provides near-human, contextual reasoning at global scale with zero infrastructure management. |
+| **Firestore** | Stores real-time civic datasets | NoSQL structure allows for instant loading of complex electoral schedules and myth-buster data. |
+| **Cloud Run** | Hosts eligibility microservices | Scales automatically to zero when not in use, ensuring extreme cost-efficiency and high availability. |
+| **Firebase Storage** | Serves educational resources | Global CDN integration ensures fast loading of 3D simulation assets and voting guides. |
+| **Google Maps API** | Enables constituency lookup | Provides precise spatial awareness, turning abstract administrative areas into familiar physical booths. |
 
 ---
 
 ## ♿ Accessibility & Security
-- **Structured AI Responses**: Responses use bold headers and bullet points for high cognitive accessibility.
-- **Multilingual Fallback**: Seamless fallback to static guidance in Hindi or Telugu if API connectivity is low.
-- **Mobile Responsive**: A fluid layout optimized for low-end devices and varied screen sizes.
-- **Security First**: 
-    - Environment variables protected via `.env`.
-    - No hardcoded API keys.
-    - Strict Firestore Security Rules applied.
+- **Structured Assistant Responses**: AI provides step-by-step guidance with bold headers and bullet points.
+- **Simple Civic Terminology**: Replaces legal jargon with plain language for first-time voters.
+- **Multilingual Fallback**: Seamless support for English, Hindi, and Telugu with local resilience.
+- **Clear Navigation**: A logical sidebar hierarchy guiding users through a "Learning Journey."
+- **Security**: Environment variables strictly protected via `.env`; no hardcoded API keys; Firestore rules enforced.
 
 ---
 
@@ -162,10 +166,16 @@ The app will be available at `http://localhost:5173`.
 
 ---
 
-## 📋 Assumptions & Authoritative Sources
-- **Internet Access**: Required for real-time AI responses and Map services.
-- **User Identity**: Users are assumed to possess at least one valid identity document (Aadhaar, Voter ID, etc.).
-- **ECI Authority**: All electoral data and rules are modeled after official **Election Commission of India (ECI)** guidelines.
+---
+
+## Evaluation Alignment
+
+This assistant improves:
+- **voter readiness awareness**
+- **document preparation understanding**
+- **polling workflow confidence**
+- **constituency discovery ability**
+- **election timeline familiarity**
 
 ---
 *Developed for the Google Gemini Civic Hackathon • Empowering the Indian Voter.*
