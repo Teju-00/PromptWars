@@ -1,92 +1,105 @@
-# Election AI - Digital Voter Service Portal
+# India Election Companion Assistant
 
-An advanced AI-powered pilot system for Indian electoral literacy and digital service integration. This project is designed to help voters understand the election process through AI engagement, simulations, and eligibility verification.
+An advanced, AI-powered digital companion designed to bridge the electoral literacy gap in India. This platform serves as a "First-Time Indian Voter Companion," guiding citizens through every phase of the democratic process—from registration to casting their vote.
 
-## 🚀 Quick Start
+## 🎯 Challenge Vertical: First-Time Indian Voter Companion Assistant
+
+### Problem Statement
+First-time voters in India often face significant hurdles:
+- **Complexity**: Confusion regarding Form 6 registration and specific document requirements.
+- **Process Anxiety**: Uncertainty about the step-by-step procedure inside a polling booth.
+- **Misinformation**: Exposure to myths regarding EVMs, VVPATs, and voting rights.
+- **Data Fragmentation**: Difficulty in locating specific constituency and booth details.
+
+### Solution Overview
+The **India Election Companion Assistant** addresses these challenges through a centralized, AI-driven experience:
+- **AI-Powered Guidance**: A specialized Gemini-based assistant for context-aware civic Q&A.
+- **Readiness Scoring**: A dynamic logic engine that evaluates a voter's preparedness based on registration and awareness.
+- **Immersive Simulation**: A 3D-styled voting simulator to demystify the booth experience.
+- **Constituency Intelligence**: Real-time booth and administrative lookup using PINCODE.
+- **Fact-Check Engine**: Proactive detection and clarification of electoral myths.
+- **Multilingual Support**: Seamless transitions between English, Hindi, and Telugu.
+
+---
+
+## 🛠 Google Services & Technologies Used
+
+### Core Google Infrastructure
+- **Vertex AI Gemini**: Powers the "Electoral Knowledge Engine" for structured, civic-minded responses.
+- **Firebase Firestore**: Manages real-time data for timelines, myths, quiz topics, and user progress.
+- **Firebase Storage**: Securely handles educational document storage and user profile assets.
+- **Google Maps API**: Facilitates polling station visualization and distance calculation.
+- **Cloud Run**: Hosts the project's backend API and static frontend assets for scalable performance.
+- **Antigravity IDE**: Used for advanced agentic coding and project orchestration.
+
+### Architecture
+- **Frontend**: React 19 + Vite + TailwindCSS (Vanilla CSS for premium styling).
+- **Backend**: Node.js + Express (running on Cloud Run).
+- **Animation**: Motion (framer-motion) for fluid transitions.
+- **Icons**: Lucide React.
+
+---
+
+## 🌟 Key Features
+
+1.  **Chat Assistant**: Grounded AI assistant for first-time voters with step-by-step guidance.
+2.  **Voting Readiness Analyzer**: Dashboard widget calculating readiness based on docs and registration status.
+3.  **Timeline Learning Journey**: Interactive roadmap of the election cycle (Notification to Results).
+4.  **Document Center**: Verification guide for required age and residence proofs.
+5.  **Myth vs Fact Detector**: A curated interface to clarify electoral misinformation.
+6.  **Quiz Engine**: Gamified learning modules with topics on constitutional rights.
+7.  **Voting Simulation**: Digital walkthrough of the polling booth (Inking → EVM → VVPAT).
+8.  **Constituency Lookup**: Instant identification of Parliamentary and Assembly constituencies.
+9.  **Interactive Dashboard**: Centralized hub for tracking voter readiness and news.
+
+---
+
+## 🧠 Decision Logic & Intelligence
+
+### Readiness Scoring Logic
+The platform calculates a **"Voter Readiness Score"** out of 100% using the following weights:
+- **Registration Status (40%)**: Verified via simulation or registration data.
+- **Document Availability (30%)**: Confirmed possession of Age and Address proofs.
+- **Booth Awareness (20%)**: Successful lookup of designated polling station.
+- **Knowledge Base (10%)**: Completion of basic civic literacy quiz modules.
+
+### Accessibility & Security
+- **Civic Workflow Guidance**: Responses are structured with bullet points and clear "Recommended Next Steps."
+- **Secure Environment**: All API keys and Firebase credentials are protected via environment variables (`.env`).
+- **No Hardcoding**: All AI and Map calls are strictly routed through secure environment hooks.
+- **Firestore Security**: Rules applied to ensure user data isolation.
+
+---
+
+## 🚀 How to Run Locally
 
 ### 1. Prerequisites
-- Node.js (v18 or higher)
-- npm or yarn
+- Node.js (v18+)
+- Firebase Project (with Firestore and Storage enabled)
+- Google Gemini API Key
 
-### 2. Installation
+### 2. Setup
 ```bash
-# Clone the repository (if applicable) or unzip the project
-cd election-ai
-
 # Install dependencies
 npm install
-```
 
-### 3. Environment Setup
-Copy the `.env.example` file to `.env` and provide your API keys.
-
-```bash
+# Configure environment
 cp .env.example .env
+# Open .env and add your API keys
 ```
 
-**Required Environment Variables:**
-- `VITE_GEMINI_API_KEY`: Your Google Gemini API Key.
-- `VITE_APP_URL`: Base URL of the app (default: http://localhost:3000).
-
-### 4. Running the Project
-
-#### Development Mode
-Runs both the Express backend and the Vite frontend with HMR.
+### 3. Run Development Server
 ```bash
 npm run dev
 ```
+The app will be available at `http://localhost:5173`.
 
-#### Production Build
-Build the project for production.
-```bash
-npm run build
-```
+---
 
-#### Production Start
-Run the built project.
-```bash
-npm run start
-```
+## 📋 Assumptions & Authoritative Sources
+- **Internet Access**: Required for real-time AI responses and Map services.
+- **User Identity**: Users are assumed to possess at least one valid identity document (Aadhaar, Voter ID, etc.).
+- **ECI Authority**: All electoral data and rules are modeled after official **Election Commission of India (ECI)** guidelines.
 
-## 📁 Project Structure
-
-```bash
-election-ai/
-├── src/
-│   ├── assets/       # Static assets (images, icons)
-│   ├── components/   # Reusable UI components
-│   ├── config/       # Centralized app configuration
-│   ├── context/      # React context (Settings, Identity)
-│   ├── hooks/        # Custom React hooks
-│   ├── i18n/         # Internationalization (English, Hindi, Telugu)
-│   ├── pages/        # Route-level page components
-│   ├── services/     # Firebase, Gemini, and external API services
-│   ├── utils/        # Helper functions & storage utilities
-│   ├── App.tsx       # Main application routing
-│   └── main.tsx      # Entry point
-├── server.ts         # Express backend (API & static serving)
-├── .env.example      # Environment template
-└── README.md         # This file
-```
-
-## 🛠 Features
-- **AI Election Tutor**: Real-time Q&A regarding the Indian voting process.
-- **Poll Simulator 2.0**: Step-by-step simulation of the booth experience (Inking, EVM, VVPAT).
-- **Voter IQ Quiz**: Multilingual gamified testing of electoral literacy.
-- **Constituency Lookup**: Find your designated polling booth by pincode.
-- **Identity Management**: Education on Form 6 and identity verification documents.
-- **Multilingual Support**: Fully localized in English, Hindi, and Telugu.
-
-## ⚠️ Troubleshooting
-
-### Gemini API Error
-If the chat assistant fails, ensure your `VITE_GEMINI_API_KEY` is correctly set in `.env` and associated with a project in Google AI Studio.
-
-### Firebase Connection
-This project uses Firebase for secondary progress persistence. Ensure your `firebase-applet-config.json` is present in the root directory if using Firebase features.
-
-### Port Conflicts
-By default, the server runs on port **3000**. If this port is occupied, change the `PORT` constant in `server.ts`.
-
-## 📜 License
-Educational Pilot Project - Licensed under MIT.
+---
+*Developed for the Google Gemini Civic Hackathon • Empowering the Indian Voter.*
